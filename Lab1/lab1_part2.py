@@ -4,9 +4,13 @@ class Company:
         self.employees = []
         self.CEO = CEO
 
+#add_employee(employee, manager_id): Add an employee to the company's under their
+#respective manager. (You need to search for the manager in the company hierarchy and add
+#the employee under the respective manager), (if the manager_id is the general manager, you
+#need to make sure that the added employee is actually a manager)
     def add_employee(self, employee):
-        self.employees.append(employee)
-        print(f"Employee {employee} added.")
+            self.employees.append(employee)
+            print(f"Employee {employee} added.")
     
     def remove_employee(self, employee):
         self.employees.remove(employee)
