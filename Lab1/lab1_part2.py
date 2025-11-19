@@ -47,7 +47,7 @@ class Manager(Employee):
 
     def remove_subordinate(self, subordinate):
         self.subordinates.remove(subordinate)
-        print(f"Removed {subordinate} as subordinate to")
+        print(f"Removed {subordinate} as subordinate")
     
     def get_subordinates(self):
         print(f"{self.name}'s Subordinates: {[sub.name for sub in self.subordinates]}")
@@ -106,8 +106,6 @@ class Company:
         for emp in self.employees:
             total += emp.salary
         print(f"Total salaries being paid in {self.name}: {total}")
-        return total
-
 
 class Address:
     def __init__(self, street, city):
