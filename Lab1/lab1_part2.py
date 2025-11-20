@@ -82,6 +82,9 @@ class Company:
             employee.manager.add_subordinate(employee)
     
     def remove_employee(self, employee):
+        if employee is self.CEO:
+            print("Error: Can not Remove CEO from company.")
+            return
         if isinstance(employee, Manager):
             print(f"Reassigning {employee.name}'s subordinates to CEO")
             for sub in employee.subordinates:
@@ -91,6 +94,8 @@ class Company:
         if employee in self.employees:
             self.employees.remove(employee)
             print(f"Employee {employee} removed.")
+
+
     
     def list_hierarchy(self):
         print(f"Company: {self.name}")
@@ -234,3 +239,4 @@ assis_manager.calculate_bonus()
 
 #Company Salaries being paid
 company.company_salary()
+company.remove_employee(CEO)
