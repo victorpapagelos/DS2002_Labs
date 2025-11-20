@@ -177,7 +177,7 @@ task3=Task("Book-Keeping", "in 2 weeks")
 
 #Assistant Manager (2nd Manager)
 assis_manager_addr = Address("Z Road", "Halmstad")
-#                                                              Salary Rause                     Task  Manager Subs
+#                                                              Salary Raise                     Task  Manager Subs
 assis_manager=Manager("Bob", 32, "AM123", "Assistant-Manager", 65000, None, assis_manager_addr, None, "John", [])
 #assis_manager_task = task2
 
