@@ -161,7 +161,7 @@ class Task:
 
 #CEO/General-Manager
 CEO_addr = Address("P road", "Halmstad")
-                                                          #Salary Raise           Task  Bonus  
+                                                          #Salary Raise           Task  Bonus Subordinates 
 CEO = Manager("John", 45, "M123", "CEO / General-Manager", 80000, None, CEO_addr, None, None, [] )
 
 #Company  
@@ -177,7 +177,8 @@ task3=Task("Book-Keeping", "in 2 weeks")
 
 #Assistant Manager (2nd Manager)
 assis_manager_addr = Address("Z Road", "Halmstad")
-assis_manager=Manager("Bob", 32, "AM123", "Assistant-Manager", 65000, None, assis_manager_addr, None, None, [])
+#                                                              Salary Rause                     Task  Manager Subs
+assis_manager=Manager("Bob", 32, "AM123", "Assistant-Manager", 65000, None, assis_manager_addr, None, "John", [])
 #assis_manager_task = task2
 
 #Employee 1
