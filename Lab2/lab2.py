@@ -115,3 +115,36 @@ merge_avg = timer.average_time(sorter.merge_split, 50)
 bubble_avg = timer.average_time(sorter.bubble_sort, 50)
 python_avg = timer.average_time(sorter.python_sort, 50)
 print(f"\ntime average comparison (seconds):\nMerge: {merge_avg}\nBubble: {bubble_avg}\nPythonSort: {python_avg}")
+
+class Sort:
+    def binary_search(self, lis, val, low, high):
+        self.lis = lis
+        self.val = val
+        self.low = low
+        self.high = high
+
+        if (low > high):
+            return None
+        else:
+            mid = (low + high) // 2
+            if val > lis[mid]:
+                return self.binary_search(lis, val, mid + 1, high)
+            elif val < lis[mid]:
+                return self.binary_search(lis, val, low, mid - 1)
+            else:
+                return mid
+        
+
+sorted = [14, 19, 33, 36, 62, 68, 83, 126, 173, 220, 251, 257, 
+               283, 286, 300, 304, 347, 372, 382, 416, 424, 447, 498, 
+               508, 521, 549, 589, 637, 664, 671, 677, 697, 707, 715, 725, 
+               731, 740, 757, 769, 777, 810, 818, 836, 882, 894, 941, 985, 
+               1007, 1011, 1019, 1041, 1056, 1074, 1084, 1092, 1108, 1111, 
+               1113, 1126, 1132, 1155, 1187, 1194, 1203, 1252, 1260, 1277, 
+               1319, 1355, 1362, 1373, 1374, 1375, 1378, 1380, 1393, 1463, 
+               1513, 1518, 1530, 1531, 1547, 1560, 1562, 1577, 1581, 1616, 
+               1625, 1631, 1639, 1641, 1670, 1701, 1707, 1714, 1723, 1727, 
+               1737, 1780, 1819, 1870, 1871, 1879, 1894, 1930, 1933, 1935]
+        
+binary = Sort()
+binary.binary_search(sorted, 173, 0, len(lis) - 1)
