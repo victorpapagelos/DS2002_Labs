@@ -3,10 +3,10 @@ from time import perf_counter
 
 
 class BubbleSort:
-
+#Repeatedly swap elements by comparing
     def __init__(self, lis):
         self.lis = lis
-        
+
     def sort(self, lis):
         return self.bubble_sort(lis)
 
@@ -14,7 +14,7 @@ class BubbleSort:
         n = len(lis)
         comparisons = 0
         for i in range (n):                 #<--
-            for j in range(0, n - i - 1):   #<-- Base Case - Complexity: O(n^2)
+            for j in range(0, n - i - 1):   #<-- Base Case - Complexity: O(n²)
                 comparisons +=1
                 if lis[j] > lis[j + 1]:
                     lis[j], lis[j + 1] = lis[j +1], lis[j]
@@ -22,6 +22,7 @@ class BubbleSort:
     
 
 class PythonSort:
+#Built in function
     def sort(self, lis):
         return self.python_sort(lis)
 
@@ -30,6 +31,7 @@ class PythonSort:
         return lis
     
 class MergeSort:
+#Splits lists in halves, recursively sorts halves
     def sort(self, lis):
         return self.merge_split(lis) 
 
@@ -52,9 +54,10 @@ class MergeSort:
         recursions = 1 + recursions_right + recursions_left
 
         return self.merge(split_left, split_right), recursions
-
+#Returns recursion count
     
     def merge(self, left, right):
+#Merges sorted halves into a list
         sorted = []
         left_index = 0
         right_index = 0
@@ -68,8 +71,10 @@ class MergeSort:
         sorted.extend(left[left_index:])
         sorted.extend(right[right_index:])
         return sorted
+#Returns Sorted list
 
 class BinarySearch:
+#Search for a value in already sorted list using recursion
     def search(self, lis, target):
         return self.binary_search(lis, target, 0, len(lis) - 1)
 
@@ -86,6 +91,7 @@ class BinarySearch:
                 return mid
 
 class Timer:
+#Measures execution time
     def __init__(self):
         self.start = None
         self.stop = None
@@ -99,6 +105,7 @@ class Timer:
          self.stop = perf_counter()
          return self.stop - self.start
     
+#Calculates average time for a sorting algorithm
     def average_time(self, function, runs):
         times = []
         for i in range(runs):
