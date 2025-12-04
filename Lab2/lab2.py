@@ -3,11 +3,12 @@ from time import perf_counter
 
 
 class BubbleSort:
-    def sort(self, lis):
-        return self.bubble_sort(lis)
 
     def __init__(self, lis):
         self.lis = lis
+        
+    def sort(self, lis):
+        return self.bubble_sort(lis)
 
     def bubble_sort(self, lis):
         n = len(lis)
