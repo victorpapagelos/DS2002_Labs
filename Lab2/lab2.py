@@ -51,6 +51,18 @@ class Sort:
         sorted.extend(left[left_index:])
         sorted.extend(right[right_index:])
         return sorted
+    
+    def binary_search(self, lis, val, low, high):
+        if (low > high):
+            return None
+        else:
+            mid = (low + high) // 2
+            if val > lis[mid]:
+                return self.binary_search(lis, val, mid + 1, high)
+            elif val < lis[mid]:
+                return self.binary_search(lis, val, low, mid - 1)
+            else:
+                return mid
 
 class Timer:
     def __init__(self):
@@ -115,26 +127,8 @@ merge_avg = timer.average_time(sorter.merge_split, 50)
 bubble_avg = timer.average_time(sorter.bubble_sort, 50)
 python_avg = timer.average_time(sorter.python_sort, 50)
 print(f"\ntime average comparison (seconds):\nMerge: {merge_avg}\nBubble: {bubble_avg}\nPythonSort: {python_avg}")
-
-class Sort:
-    def binary_search(self, lis, val, low, high):
-        self.lis = lis
-        self.val = val
-        self.low = low
-        self.high = high
-
-        if (low > high):
-            return None
-        else:
-            mid = (low + high) // 2
-            if val > lis[mid]:
-                return self.binary_search(lis, val, mid + 1, high)
-            elif val < lis[mid]:
-                return self.binary_search(lis, val, low, mid - 1)
-            else:
-                return mid
-        
-
+ 
+#Recursive Binary Search
 sorted = [14, 19, 33, 36, 62, 68, 83, 126, 173, 220, 251, 257, 
                283, 286, 300, 304, 347, 372, 382, 416, 424, 447, 498, 
                508, 521, 549, 589, 637, 664, 671, 677, 697, 707, 715, 725, 
@@ -146,5 +140,6 @@ sorted = [14, 19, 33, 36, 62, 68, 83, 126, 173, 220, 251, 257,
                1625, 1631, 1639, 1641, 1670, 1701, 1707, 1714, 1723, 1727, 
                1737, 1780, 1819, 1870, 1871, 1879, 1894, 1930, 1933, 1935]
         
-binary = Sort()
-binary.binary_search(sorted, 173, 0, len(lis) - 1)
+binary = Sort(sorted)
+result = binary.binary_search(sorted, 173, 0, len(sorted) - 1)
+print(result)
