@@ -162,6 +162,6 @@ sorted = [14, 19, 33, 36, 62, 68, 83, 126, 173, 220, 251, 257,
         
 binary = BinarySearch()
 result = binary.search(sorted, 173)
-print(f"\nIndex for target number by binary search {result}\n")
+print(f"\nIndex for target number by binary search: {result}\n")
 
 print(f"unsorted list: {lis}")
