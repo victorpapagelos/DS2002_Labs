@@ -1,29 +1,42 @@
 import random
 from time import perf_counter
 
-lis = random.sample(range(1, 10000), 500)
 
-class Sort:
+class BubbleSort:
+    def sort(self, lis):
+        return self.bubble_sort(lis)
+
     def __init__(self, lis):
         self.lis = lis
 
     def bubble_sort(self, lis):
         n = len(lis)
+        comparisons = 0
         for i in range (n):
             for j in range(0, n - i - 1):
+                comparisons +=1
                 if lis[j] > lis[j + 1]:
                     lis[j], lis[j + 1] = lis[j +1], lis[j]
-        return lis
+        return lis, comparisons
     
+
+class PythonSort:
+    def sort(self, lis):
+        return self.python_sort(lis)
+
     def python_sort(self, lis):
         lis.sort()
         return lis
     
+class MergeSort:
+    def sort(self, lis):
+        return self.merge_split(lis) 
+
     def merge_split(self, lis):
         n = len(lis)
 
         if n <= 1:
-            return lis
+            return lis, 1
         
         mid = n//2
 
@@ -31,11 +44,14 @@ class Sort:
 
         right = lis[mid:]
 
-        split_left = self.merge_split(left)
+        split_left, recursions_left = self.merge_split(left)
 
-        split_right = self.merge_split(right)
+        split_right, recursions_right = self.merge_split(right)
 
-        return self.merge(split_left, split_right)
+        recursions = 1 + recursions_right + recursions_left
+
+        return self.merge(split_left, split_right), recursions
+
     
     def merge(self, left, right):
         sorted = []
@@ -51,7 +67,11 @@ class Sort:
         sorted.extend(left[left_index:])
         sorted.extend(right[right_index:])
         return sorted
-    
+
+class BinarySearch:
+    def search(self, lis, target):
+        return self.binary_search(lis, target, 0, len(lis) - 1)
+
     def binary_search(self, lis, val, low, high):
         if (low > high):
             return None
@@ -81,39 +101,37 @@ class Timer:
     def average_time(self, function, runs):
         times = []
         for i in range(runs):
-            lis = random.sample(range(1, 10000), 500)
             self.timer_start()
             function(lis.copy())
             times.append(self.timer_stop())
         return sum(times) / len(times)
             
 
-         
+lis = random.sample(range(1, 50000), 500)         
 
 #MergeSort + Timer
 merge_timer = Timer()
 merge_timer.timer_start()
-merge = Sort(lis)
-sorted = merge.merge_split(lis)
-print(sorted)
+merge = MergeSort()
+sorted, recursions = merge.sort(lis)
+#print(sorted)
 elapsedmerge = merge_timer.timer_stop()
-print(f"Time elapsed for mergesort: {elapsedmerge}\n")
+print(f"Time elapsed for mergesort: {elapsedmerge}\nRecursions: {recursions}")
 
 #BubbleSort + Timer
 bubble_timer = Timer()
 bubble_timer.timer_start()
-bubble = Sort(lis)
-bubble_list = bubble.bubble_sort(lis)
-print(bubble_list)
+bubble = BubbleSort(lis)
+bubble_list, comparisons = bubble.sort(lis)
+#print(bubble_list)
 elapsedbubble = bubble_timer.timer_stop()
-print(f"Time elapsed for bubblesort: {elapsedbubble}\n")
+print(f"Time elapsed for bubblesort: {elapsedbubble}\nComparisons {comparisons}\n")
 
 #PythonSort + Timer
 python_timer = Timer()
 python_timer.timer_start()
-sort = Sort(lis)
-pytsort = sort.python_sort(lis)
-print(pytsort)
+sort = PythonSort()
+#print(pytsort)
 elapsedpytsort = python_timer.timer_stop()
 print(f"Time elapsed for pythonsort: {elapsedpytsort}\n")
 
@@ -121,13 +139,12 @@ print(f"time comparison in one run (seconds):\nMerge: {elapsedmerge}\nBubble: {e
 
 #Average Time For Sorting Per Method
 timer = Timer()
-sorter = Sort(lis)
 
-merge_avg = timer.average_time(sorter.merge_split, 50)
-bubble_avg = timer.average_time(sorter.bubble_sort, 50)
-python_avg = timer.average_time(sorter.python_sort, 50)
+merge_avg = timer.average_time(merge.sort, 50)
+bubble_avg = timer.average_time(bubble.sort, 50)
+python_avg = timer.average_time(sort.sort, 50)
 print(f"\ntime average comparison (seconds):\nMerge: {merge_avg}\nBubble: {bubble_avg}\nPythonSort: {python_avg}")
- 
+
 #Recursive Binary Search
 sorted = [14, 19, 33, 36, 62, 68, 83, 126, 173, 220, 251, 257, 
                283, 286, 300, 304, 347, 372, 382, 416, 424, 447, 498, 
@@ -140,6 +157,6 @@ sorted = [14, 19, 33, 36, 62, 68, 83, 126, 173, 220, 251, 257,
                1625, 1631, 1639, 1641, 1670, 1701, 1707, 1714, 1723, 1727, 
                1737, 1780, 1819, 1870, 1871, 1879, 1894, 1930, 1933, 1935]
         
-binary = Sort(sorted)
-result = binary.binary_search(sorted, 173, 0, len(sorted) - 1)
+binary = BinarySearch()
+result = binary.search(sorted, 173)
 print(result)

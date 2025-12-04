@@ -34,20 +34,24 @@ class Employee(Person):
         return (f"{self.name} ({self.position}, Salary: {self.salary})")
 
 class Manager(Employee):
-    def __init__ (self, name, age, employee_id, position, salary, raise_amount, address, task, bonus, subordinates):
-        super().__init__(name, age, employee_id, position, salary, raise_amount, address, task, bonus)
+    def __init__ (self, name, age, employee_id, position, salary, raise_amount, address, task, bonus, subordinates=None, manager=None):
+        super().__init__(name, age, employee_id, position, salary, raise_amount, address, task, bonus, manager = manager)
         if subordinates is None:
             self.subordinates = []
         else:
             self.subordinates = subordinates
 
     def add_subordinate(self, subordinate):
-        self.subordinates.append(subordinate)
-        print(f"Added {subordinate} as subordinate")
+        if subordinate not in self.subordinates:
+            self.subordinates.append(subordinate)
+            subordinate.manager = self
+            print(f"Added {subordinate} as subordinate")
 
     def remove_subordinate(self, subordinate):
-        self.subordinates.remove(subordinate)
-        print(f"Removed {subordinate} as subordinate")
+        if subordinate not in self.subordinates:
+            self.subordinates.remove(subordinate)
+            subordinate.manager = None
+            print(f"Removed {subordinate} as subordinate")
     
     def get_subordinates(self):
         print(f"{self.name}'s Subordinates: {[sub.name for sub in self.subordinates]}")
@@ -65,6 +69,7 @@ class Manager(Employee):
         print(f"Number of Subordinates: {len(self.subordinates)}")
         sub_names = [sub.name for sub in self.subordinates]
         print(f"Subordinates: {sub_names}")
+
 
 class Company:
     def __init__ (self, name, CEO):
@@ -85,11 +90,30 @@ class Company:
         if employee is self.CEO:
             print("Error: Can not Remove CEO from company.")
             return
+        
         if isinstance(employee, Manager):
-            print(f"Reassigning {employee.name}'s subordinates to CEO")
-            for sub in employee.subordinates:
-                self.CEO.add_subordinate(sub)
+            print(f"Reassigning {employee.name}'s subordinates to other Manager")
+            destination = employee.manager
+
+            if destination is None:
+                for sub in employee.subordinates:
+                    print(f"Removing {sub.name}, no manager to reassign to")
+                    self.remove_employee(sub)
+            elif destination is self.CEO:
+                for sub in employee.subordinates:
+                    print(f"Removing {sub.name}, can not be reassigned to CEO")
+                    self.remove_employee(sub)
+            else:
+                for sub in employee.subordinates:
+                    print(f"Reassigning {sub.name} to {destination.name}")
+                    destination.add_subordinate(sub)
             employee.subordinates = []
+        
+        if employee in self.employees:
+            self.employees.remove(employee)
+            print(f"Removes {employee.name}")
+                
+
 
         if employee in self.employees:
             self.employees.remove(employee)
@@ -167,7 +191,7 @@ class Task:
 #CEO/General-Manager
 CEO_addr = Address("P road", "Halmstad")
                                                           #Salary Raise           Task  Bonus Subordinates 
-CEO = Manager("John", 45, "M123", "CEO / General-Manager", 80000, None, CEO_addr, None, None, [] )
+CEO = Manager("John", 45, "M123", "CEO / General-Manager", 80000, None, CEO_addr, None, None, [], None)
 
 #Company  
 company = Company("Halmstad Högskola Inc. ", CEO)
@@ -182,8 +206,10 @@ task3=Task("Book-Keeping", "in 2 weeks")
 
 #Assistant Manager (2nd Manager)
 assis_manager_addr = Address("Z Road", "Halmstad")
-#                                                              Salary Raise                     Task  Manager Subs
-assis_manager=Manager("Bob", 32, "AM123", "Assistant-Manager", 65000, None, assis_manager_addr, None, "John", [])
+second_manager_addr = Address("L Road", "Halmstad")
+#                                                              Salary Raise                     Task  Bonus Subs Manager
+assis_manager=Manager("Bob", 32, "AM123", "Assistant-Manager", 65000, None, assis_manager_addr, None, None, [], CEO)
+second_manager=Manager("Karl", 24, "Karl123", "Second-Manager", 65000, None,second_manager_addr, None, None, [], assis_manager)
 #assis_manager_task = task2
 
 #Employee 1
@@ -196,6 +222,9 @@ emp2 = Employee("Thomas", 23, "E002", "Accountant", 28000, None, emp2_addr, None
 #Employee 3
 emp3_addr = Address("C Road", "Halmstad")
 emp3 = Employee("Leo", 48, "E003", "Productioneer", 36000, None, emp3_addr, None, None)
+
+emp4_addr = Address("U Road", "Halmstad")
+emp4 = Employee("Ronni", 25, "E004", "Cleaner", 20000, None, emp4_addr, None, None)
 
 
 #Adding Employees, Subordinates, Manager, Tasks, Meeting
@@ -220,6 +249,7 @@ CEO.add_subordinate(emp1)
 CEO.add_subordinate(emp2)
 CEO.add_subordinate(assis_manager)
 assis_manager.add_subordinate(emp3)
+second_manager.add_subordinate(emp4)
 
 #"Details"
 CEO.get_subordinates()
@@ -240,3 +270,7 @@ assis_manager.calculate_bonus()
 #Company Salaries being paid
 company.company_salary()
 company.remove_employee(CEO)
+
+second_manager.get_subordinates()
+company.remove_employee(second_manager)
+assis_manager.get_subordinates()
