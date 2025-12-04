@@ -12,8 +12,8 @@ class BubbleSort:
     def bubble_sort(self, lis):
         n = len(lis)
         comparisons = 0
-        for i in range (n):
-            for j in range(0, n - i - 1):
+        for i in range (n):                 #<--
+            for j in range(0, n - i - 1):   #<-- Base Case - Complexity: O(n^2)
                 comparisons +=1
                 if lis[j] > lis[j + 1]:
                     lis[j], lis[j + 1] = lis[j +1], lis[j]
@@ -35,8 +35,8 @@ class MergeSort:
     def merge_split(self, lis):
         n = len(lis)
 
-        if n <= 1:
-            return lis, 1   #Base Case
+        if n <= 1:          #<--
+            return lis, 1   #<-- Base Case - Complexity: O(n log n)
         
         mid = n//2
 
@@ -73,8 +73,8 @@ class BinarySearch:
         return self.binary_search(lis, target, 0, len(lis) - 1)
 
     def binary_search(self, lis, val, low, high):
-        if (low > high):
-            return None
+        if (low > high):    #<--
+            return None     #<-- Base Case - Complexity: O(log n)
         else:
             mid = (low + high) // 2
             if val > lis[mid]:
