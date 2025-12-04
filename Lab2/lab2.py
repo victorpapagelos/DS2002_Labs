@@ -36,7 +36,7 @@ class MergeSort:
         n = len(lis)
 
         if n <= 1:
-            return lis, 1
+            return lis, 1   #Base Case
         
         mid = n//2
 
@@ -107,33 +107,36 @@ class Timer:
         return sum(times) / len(times)
             
 
-lis = random.sample(range(1, 50000), 500)         
+lis = random.sample(range(1, 100), 10)         
 
 #MergeSort + Timer
 merge_timer = Timer()
 merge_timer.timer_start()
 merge = MergeSort()
-sorted, recursions = merge.sort(lis)
+merge_sorted, recursions = merge.sort(lis.copy())
 #print(sorted)
 elapsedmerge = merge_timer.timer_stop()
 print(f"Time elapsed for mergesort: {elapsedmerge}\nRecursions: {recursions}")
+print(f"Sorted list: {merge_sorted}\n")
 
 #BubbleSort + Timer
 bubble_timer = Timer()
 bubble_timer.timer_start()
-bubble = BubbleSort(lis)
-bubble_list, comparisons = bubble.sort(lis)
+bubble = BubbleSort(lis.copy())
+bubble_list, comparisons = bubble.sort(lis.copy())
 #print(bubble_list)
 elapsedbubble = bubble_timer.timer_stop()
-print(f"Time elapsed for bubblesort: {elapsedbubble}\nComparisons {comparisons}\n")
+print(f"Time elapsed for bubblesort: {elapsedbubble}\nComparisons {comparisons}")
+print(f"Sorted list: {bubble_list}\n")
 
 #PythonSort + Timer
 python_timer = Timer()
 python_timer.timer_start()
 sort = PythonSort()
-#print(pytsort)
+py_sorted = sort.sort(lis.copy())
 elapsedpytsort = python_timer.timer_stop()
-print(f"Time elapsed for pythonsort: {elapsedpytsort}\n")
+print(f"Time elapsed for pythonsort: {elapsedpytsort}")
+print(f"Sorted list: {py_sorted}\n")
 
 print(f"time comparison in one run (seconds):\nMerge: {elapsedmerge}\nBubble: {elapsedbubble}\nPythonSort: {elapsedpytsort}")
 
@@ -159,4 +162,6 @@ sorted = [14, 19, 33, 36, 62, 68, 83, 126, 173, 220, 251, 257,
         
 binary = BinarySearch()
 result = binary.search(sorted, 173)
-print(result)
+print(f"\nIndex for target number by binary search {result}\n")
+
+print(f"unsorted list: {lis}")
