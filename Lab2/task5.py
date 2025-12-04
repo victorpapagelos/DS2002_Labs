@@ -11,7 +11,7 @@ while q:
         print(node.value)
         for child in node.children:
             if child not in bfs_visited:
-                q.append(child)
+               q.append(child)
 
 #DFS - Depth First Search
 print("\nDFS VISITED:")
