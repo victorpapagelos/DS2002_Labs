@@ -13,12 +13,14 @@ class BubbleSort:
     def bubble_sort(self, lis):
         n = len(lis)
         comparisons = 0
+        swaps = 0
         for i in range (n):                 #<--
             for j in range(0, n - i - 1):   #<-- Base Case - Complexity: O(n²)
                 comparisons +=1
                 if lis[j] > lis[j + 1]:
                     lis[j], lis[j + 1] = lis[j +1], lis[j]
-        return lis, comparisons
+                    swaps += 1
+        return lis, comparisons, swaps
     
 
 class PythonSort:
@@ -131,10 +133,10 @@ print(f"Sorted list: {merge_sorted}\n")
 bubble_timer = Timer()
 bubble_timer.timer_start()
 bubble = BubbleSort(lis.copy())
-bubble_list, comparisons = bubble.sort(lis.copy())
+bubble_list, comparisons, swaps = bubble.sort(lis.copy())
 #print(bubble_list)
 elapsedbubble = bubble_timer.timer_stop()
-print(f"Time elapsed for bubblesort: {elapsedbubble}\nComparisons {comparisons}")
+print(f"Time elapsed for bubblesort: {elapsedbubble} Comparisons: {comparisons} Swaps: {swaps}")
 print(f"Sorted list: {bubble_list}\n")
 
 #PythonSort + Timer

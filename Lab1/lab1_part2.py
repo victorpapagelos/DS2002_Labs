@@ -30,6 +30,11 @@ class Employee(Person):
         self.bonus = self.salary*0.05
         print(f"Bonus for {self.name} ({self.position}) is 5% of their salary, Bonus = {self.bonus}")
 
+    def x_raise(self, x):
+        self.salary += x
+        print(self.salary)
+        return self.salary
+
     def __str__ (self):
         return (f"{self.name} ({self.position}, Salary: {self.salary})")
 
@@ -69,6 +74,7 @@ class Manager(Employee):
         print(f"Number of Subordinates: {len(self.subordinates)}")
         sub_names = [sub.name for sub in self.subordinates]
         print(f"Subordinates: {sub_names}")
+
 
 
 class Company:
@@ -274,3 +280,5 @@ company.remove_employee(CEO)
 second_manager.get_subordinates()
 company.remove_employee(second_manager)
 assis_manager.get_subordinates()
+
+emp1.x_raise(500)
