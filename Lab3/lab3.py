@@ -33,3 +33,18 @@ class KNN:
     def predict(self, new_points):
         predictions = [self.predict_class(new_point) for new_point in new_points]
         return np.array(predictions)
+    
+    def predict_class(self, new_point):
+        distances = [euclidean_distance(point, new_point) for point in self.x_train]
+
+        k_nearest_indices = np.argsort(distances)[:self.k]
+        k_nearest_labels = [self.y_train[i] for i in k_nearest_indices]
+
+        most_common = Counter(k_nearest_labels).most_common(1)[0][0]
+        return most_common
+    
+knn = KNN(5)
+knn.fit(x_train, y_train)
+predictions = knn.predict(x_test)
+accuracy = np.mean(predictions == y_test) * 100
+print(f"Accuracy: {accuracy:.2f}%")
