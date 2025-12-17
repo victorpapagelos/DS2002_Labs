@@ -51,8 +51,9 @@ class KNN:
             k_nearest_labels.append(distances[i][1])
 
         most_common = Counter(k_nearest_labels).most_common(1)[0][0]
+        print("Precicted class:", most_common)
         return most_common
-    
+
 knn = KNN(2)
 knn.fit(x_train, y_train)
 predictions = knn.predict(x_test)
