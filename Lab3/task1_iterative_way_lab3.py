@@ -1,61 +1,86 @@
-import pandas as pd
-from collections import Counter
-from sklearn.model_selection import train_test_split
-import math
 import csv
+import math
+from collections import Counter
+import matplotlib.pyplot as plt
 
 x = []
 y = []
 
 with open("iris_train.csv", "r") as file:
     reader = csv.reader(file)
-    header = next(reader)
-
+    next(reader)  # skip header
     for row in reader:
-        features = list(map(float, row[:-1]))
-        label = row[-1]
-
+        features = [float(value) for value in row[:-1]]
         x.append(features)
-        y.append(label)
+        y.append(row[-1])
 
-x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = 0.2, random_state = 2)
+split_index = int(len(x) * 0.8)
+x_train = x[:split_index]
+y_train = y[:split_index]
+x_test = x[split_index:]
+y_test = y[split_index:]
 
 def euclidean_distance(a, b):
-    return math.sqrt(sum((an - bn) ** 2 for an, bn in zip(a, b)))
+    dist = 0
+    for i in range(len(a)):
+        dist += (a[i] - b[i]) ** 2
+    return math.sqrt(dist)
 
 class KNN:
-    def __init__(self, k):
+    def __init__(self, k=3):
         self.k = k
-    
-    def fit(self, x, y):
-        self.x_train = x
-        self.y_train = y
 
-    def predict(self, new_points):
+    def fit(self, x_train_data, y_train_data):
+        self.x_train = x_train_data
+        self.y_train = y_train_data
+
+    def predict(self, x_test_data):
         predictions = []
-        for new_point in new_points:
-            predictions.append(self.predict_class(new_point))
+        for i in range(len(x_test_data)):
+            point = x_test_data[i]
+            prediction = self.predict_point(point)
+            predictions.append(prediction)
         return predictions
-    
-    def predict_class(self, new_point):
+
+    def predict_point(self, point):
         distances = []
-
         for i in range(len(self.x_train)):
-            d = euclidean_distance(self.x_train[i], new_point)
-            distances.append([d, self.y_train[i]])
+            train_point = self.x_train[i]
+            label = self.y_train[i]
+            dist = euclidean_distance(point, train_point)
+            distances.append((dist, label))
 
-        distances.sort(key=lambda item: item[0])
+        distances.sort(key=lambda x: x[0])
 
         k_nearest_labels = []
-        for i in range(self.k):
-            k_nearest_labels.append(distances[i][1])
+        for j in range(self.k):
+            k_nearest_labels.append(distances[j][1])
 
-        most_common = Counter(k_nearest_labels).most_common(1)[0][0]
-        print("Precicted class:", most_common)
+        counter = Counter(k_nearest_labels)
+        most_common = counter.most_common(1)[0][0]
         return most_common
 
-knn = KNN(2)
+knn = KNN(k=3)
 knn.fit(x_train, y_train)
 predictions = knn.predict(x_test)
-accuracy = sum(pred == true for pred, true in zip(predictions, y_test)) / len(y_test) * 100
+
+correct = 0
+for i in range(len(y_test)):
+    if predictions[i] == y_test[i]:
+        correct += 1
+accuracy = correct / len(y_test) * 100
 print(f"Accuracy: {accuracy:.2f}%")
+
+#plot
+colors = {'Iris-setosa':'red', 'Iris-versicolor':'green', 'Iris-virginica':'blue'}
+
+plt.figure(figsize=(6,5))
+for i in range(len(x_test)):
+    point = x_test[i]
+    label = predictions[i]
+    plt.scatter(point[0], point[1], color=colors[label], alpha=0.6)
+
+plt.xlabel("Feature 1")
+plt.ylabel("Feature 2")
+plt.title("Task 1: Iterative KNN Predictions")
+plt.show()
