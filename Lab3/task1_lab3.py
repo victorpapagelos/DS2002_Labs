@@ -1,14 +1,22 @@
-import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 from collections import Counter
 from sklearn.model_selection import train_test_split
 import math
+import csv
 
-data = pd.read_csv("iris_train.csv")
+x = []
+y = []
 
-x = data.drop(columns=['class']).values.tolist()
-y = data['class'].values.tolist()
+with open("iris_train.csv", "r") as file:
+    reader = csv.reader(file)
+    header = next(reader)
+
+    for row in reader:
+        features = list(map(float, row[:-1]))
+        label = row[-1]
+
+        x.append(features)
+        y.append(label)
 
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = 0.2, random_state = 2)
 
@@ -45,7 +53,7 @@ class KNN:
         most_common = Counter(k_nearest_labels).most_common(1)[0][0]
         return most_common
     
-knn = KNN(1)
+knn = KNN(2)
 knn.fit(x_train, y_train)
 predictions = knn.predict(x_test)
 accuracy = sum(pred == true for pred, true in zip(predictions, y_test)) / len(y_test) * 100
