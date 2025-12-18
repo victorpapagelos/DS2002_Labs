@@ -71,16 +71,3 @@ for i in range(len(y_test)):
 accuracy = correct / len(y_test) * 100
 print(f"Accuracy: {accuracy:.2f}%")
 
-#plot
-colors = {'Iris-setosa':'red', 'Iris-versicolor':'green', 'Iris-virginica':'blue'}
-
-plt.figure(figsize=(6,5))
-for i in range(len(x_test)):
-    point = x_test[i]
-    label = predictions[i]
-    plt.scatter(point[0], point[1], color=colors[label], alpha=0.6)
-
-plt.xlabel("Feature 1")
-plt.ylabel("Feature 2")
-plt.title("Task 1: Iterative KNN Predictions")
-plt.show()

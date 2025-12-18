@@ -66,18 +66,3 @@ end = time.time()
 
 print(f"time: {end - start} seconds")
 print(f"Accuracy: {accuracy}%")
-
-#plot
-import matplotlib.pyplot as plt
-
-# Assume x_test (NumPy array) and predictions_np (list or array) exist
-colors = {'Iris-setosa':'red', 'Iris-versicolor':'green', 'Iris-virginica':'blue'}
-
-plt.figure(figsize=(6,5))
-for point, label in zip(x_test, predictions_np):
-    plt.scatter(point[0], point[1], color=colors[label], alpha=0.6)
-
-plt.xlabel("Feature 1")
-plt.ylabel("Feature 2")
-plt.title("Task 2: Vectorized KNN Predictions")
-plt.show()
