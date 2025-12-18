@@ -1,52 +1,58 @@
-import pandas as pd
-import random
+import numpy as np
+from time import perf_counter
+import csv
 
-data = pd.read_csv("iris_train.csv")
-X_all = data.drop(columns=['class']).values.tolist()
+def load(filename):
+    features = []
+    labels = []
+ 
+    with open(filename, "r") as file:
+        reader = csv.reader(file)
+        next(reader)  # skip header
+        for row in reader:
+            features.append(row[:-1])
+            labels.append(row[-1])
+        
+        for i in range(len(features)):
+            for j in range(len(features[i])):
+                features[i][j] = float(features[i][j])
+    return (np.array(features), np.array(labels))
 
 class KMeans:
-    def __init__(self, k=3, max_iterations=100, tolerance=1e-6):
+    def __init__(self, k):
         self.k = k
-        self.max_iterations = max_iterations
-        self.tolerance = tolerance
 
-    def distance(self, point1, point2):
-        return sum((a - b) ** 2 for a, b in zip(point1, point2)) ** 0.5
+    def fit(self, cluster_features):
+        self.cluster_features = cluster_features
+        self.cluster_centers = cluster_features[:self.k]
 
-    def fit(self, X):
-        self.centroids = random.sample(X, self.k)
+    def assign_clusters(self):
+        cluster_distances = []
+        cluster = []
+        
+        #calculate the distance
+        for i in range(self.k):
+            cluster.append([])
 
-        for i in range(self.max_iterations):
-            clusters = [[] for i in range(self.k)]
+            cluster_center = self.cluster_centers[i]
+            cluster_distances.append((np.sum((self.cluster_features - cluster_center) ** 2, axis=1)) ** 0.5) 
 
-            for point in X:
-                distances = [self.distance(point, centroid) for centroid in self.centroids]
-                closest_index = distances.index(min(distances))
-                clusters[closest_index].append(point)
+        for i in range(len(self.cluster_features)):
+            closest = 0
 
-            new_centroids = []
-            for cluster in clusters:
-                if cluster:
-                    centroid = [sum(features)/len(features) for features in zip(*cluster)]
-                    new_centroids.append(centroid)
-                else:
-                    new_centroids.append(random.choice(X))
+            for j in range(self.k):
+                if cluster_distances[closest][i] > cluster_distances[j][i]:
+                    closest = j
 
-            total_movement = sum(self.distance(a, b) for a, b in zip(self.centroids, new_centroids))
-            if total_movement < self.tolerance:
-                break
 
-            self.centroids = new_centroids
+                
 
-        self.labels = []
-        for point in X:
-            distances = [self.distance(point, centroid) for centroid in self.centroids]
-            self.labels.append(distances.index(min(distances)))
 
-        return self.labels
 
-kmeans = KMeans(k=3)
-cluster_labels = kmeans.fit(X_all)
 
-print("cluster assignments (first 10 points) -", cluster_labels[:10])
-print("centroids -", kmeans.centroids)
+
+cluster_features, cluster_labels = load("iris.csv")
+
+k = KMeans(2)
+k.fit(cluster_features)
+

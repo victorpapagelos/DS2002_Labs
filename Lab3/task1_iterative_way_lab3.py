@@ -1,4 +1,5 @@
 import csv
+from time import perf_counter
 
 def load(filename):
     features = []
@@ -72,14 +73,20 @@ class KNN:
 features_train, labels_train = load("iris_train.csv")
 features_test, labels_test = load("iris_test.csv")
 
+start = perf_counter()
+
 knn = KNN(k=7)
 knn.fit(features_train, labels_train)
 predictions = knn.predict_multiple(features_test)
+
+end = perf_counter()
 
 correct = 0
 for i in range(len(labels_test)):
     if predictions[i] == labels_test[i]:
         correct += 1
 accuracy = correct / len(labels_test) * 100
+
+print(f"time: {end - start} seconds")
 print(f"Accuracy: {accuracy:.2f}%")
 
