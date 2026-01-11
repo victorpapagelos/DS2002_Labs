@@ -27,7 +27,7 @@ class KMeans:
         self.k = k
 
     def fit(self, data):
-        self.data = data # store data
+        self.data = np.array(data) # store data
         self.centers = data[:self.k] # starting cluster points using K
 
     def assign_clusters(self):
