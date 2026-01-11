@@ -1,92 +1,95 @@
-import csv # Python library csv reader
-from time import perf_counter # Timer
+import csv
+from time import perf_counter
 
-def load(filename): # filename as input for reading function
-    features = [] # <-- empty list store feature values
-    labels = [] # <-- empty list stores classes
- 
-    with open(filename, "r") as file: #read the filename
-        reader = csv.reader(file) #csv reader function
-        next(reader) #skips header row that does not contain data
+def load(filename):
+    features = [] # empty lists containing features & labels
+    labels = []
+
+    with open(filename, "r") as file:
+        reader = csv.reader(file)
+        next(reader)  # skip header
+
         for row in reader:
-            features.append(row[:-1]) # append features
-            labels.append(row[-1]) # Add labels to list
-                                    # element -1 in row is the label (last)
+            features.append(row[:-1])  # feature values
+            labels.append(row[-1])     # class labels
 
+    # converts feature values to float
+    for i in range(len(features)): # through each datapoint
+        for j in range(len(features[i])): # each feature
+            features[i][j] = float(features[i][j]) # convert features value from string to float
 
-        for i in range(len(features)):          # Per row
-            for j in range(len(features[i])):   # Per feature in the row.
-                features[i][j] = float(features[i][j])  # Make each element in the row a float instead of a string
-    return (features, labels) # tuple
+    return features, labels #return values
+
 
 class KNN:
-    def __init__(self, k=3): # K amount of neighbors
-        self.k = k 
+    def __init__(self, k=0): #constructor, k = amount of neighbours to check
+        self.k = k
 
-    def euclidean_distance(self, A, B):
-        result = 0.0
-        for i in range(len(A)): # len(A) amount of features 
-            result += (A[i] - B[i]) ** 2
+    def euclidean_distance(self, A, B): #euclidean distance
+        total = 0.0 #distance value
+        for i in range(len(A)):
+            total += (A[i] - B[i]) ** 2 
+        return total ** 0.5 #takes square root of total (the difference, squared)
 
-        return result ** 0.5
-
-    def fit(self, features_train, labels_train): # stores training data inside object
+    def fit(self, features_train, labels_train): #no training needed, stores data inside objects to be used later
         self.features_train = features_train
         self.labels_train = labels_train
 
-    def predict_multiple(self, features_test):
-        predictions = []                        # Storage
-        for element in features_test:       # for each test row
-            prediction = self.predict(element)  # Predicts each element
-            predictions.append(prediction)      # Puts them in storage 
-        return predictions
+    def predict_multiple(self, features_test): #predicts class for multiple points
+        predictions = [] # list for predictions
+        for element in features_test: 
+            predictions.append(self.predict(element)) # predict function to get label, store in the list
+        return predictions #return list
 
-    def predict(self, new_element): #new datapoint
-        distances = []      
-        for i in range(len(self.features_train)): # iterate over all training samples
-            element_feature = self.features_train[i] # gets the feature values
-            element_label = self.labels_train[i]     # gets the label
+    def predict(self, new_element): # the unseen data point
+        distances = [] # stores distances
 
-            distance = self.euclidean_distance(new_element, element_feature) # distance between test and training point
-            distances.append((distance, element_label)) # save distance together with label (connected)
+        # calculate distance to all training points
+        for i in range(len(self.features_train)): #for each training data point
+            distance = self.euclidean_distance(new_element, self.features_train[i])
+            distances.append((distance, self.labels_train[i]))
+
+        # sort by distance (low to high)
+        distances.sort()
 
         k_nearest_labels = []
-        for j in range(self.k):
-            k_nearest_labels.append(distances[j][1]) # takes (Kx) items from 
-                                                     # [1] is the element_label part of the tuple on line 51
+        for i in range(self.k): #our k value
+            k_nearest_labels.append(distances[i][1]) #take labels from k nearest points
 
-        labels = {}
-        for label in k_nearest_labels:       # for each of our nearest labels 
-            if label in list(labels.keys()):   # check if the label is already in our labels dict
-                labels[label] += 1             # add to it
+        # count labels
+        label_count = {} #stores label (key) & value (appearances)
+        for label in k_nearest_labels: #loops through labels
+            if label in label_count:
+                label_count[label] += 1 #if already in dictionary, +1 count
             else:
-                labels[label] = 1              # add
+                label_count[label] = 1 #if not seen, add to dic
 
-        most_common_label = list(labels.keys())[0] # Assumes the base label is 0
-        for label in labels:                       # checks each label in the labels dict
-            if labels[label] > labels[most_common_label]: # If we have more of label than the most common one
-                most_common_label = label                 # then we make label our new most common one
+        # find most common label
+        most_common_label = list(label_count.keys())[0] #pick first label (start point)
+        for label in label_count: # loop through labels
+            if label_count[label] > label_count[most_common_label]: # if current label count is greater than "start point"
+                most_common_label = label # replace with new label
 
-        return most_common_label # return the most common label
+        return most_common_label # return label
 
 
+features_train, labels_train = load("iris_train.csv") #load training data
+features_test, labels_test = load("iris_test.csv") #load test data
 
-features_train, labels_train = load("iris_train.csv") # Loading using tuples 
-features_test, labels_test = load("iris_test.csv") # Loading using tuples
+start = perf_counter() #timer start
 
-start = perf_counter()
+knn = KNN(k=7) #determine K value
+knn.fit(features_train, labels_train) # store training data
+predictions = knn.predict_multiple(features_test) #predict labels for all test data
 
-knn = KNN(k=7)
-knn.fit(features_train, labels_train)
-predictions = knn.predict_multiple(features_test)
-
-end = perf_counter()
+end = perf_counter() #timer end
 
 correct = 0
-for i in range(len(labels_test)): # For each test element
-    if predictions[i] == labels_test[i]: # Is the predicted element correct?
-        correct += 1                     # If it is correct, then add one to our tracker.
-accuracy = correct / len(labels_test) * 100 # Gets the accuracy, if you get 25/50 correct you get back 50.
+for i in range(len(labels_test)):
+    if predictions[i] == labels_test[i]: # calculate accuracy
+        correct += 1
 
-print(f"time: {end - start} seconds")
-print(f"Accuracy: {accuracy:.2f}%")
+accuracy = correct / len(labels_test) * 100 # percentage of accurate predictions
+
+print(f"time: {end - start} seconds") # prints time elapsed
+print(f"Accuracy: {accuracy:.2f}%") #accuracy
