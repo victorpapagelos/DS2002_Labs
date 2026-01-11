@@ -1,17 +1,17 @@
-import csv
-from time import perf_counter
+import csv # Python library csv reader
+from time import perf_counter # Timer
 
-def load(filename):
-    features = []
-    labels = []
+def load(filename): # filename as input for reading function
+    features = [] # <-- empty list store feature values
+    labels = [] # <-- empty list stores classes
  
-    with open(filename, "r") as file: 
-        reader = csv.reader(file)
-        next(reader)  # skip header
+    with open(filename, "r") as file: #read the filename
+        reader = csv.reader(file) #csv reader function
+        next(reader) #skips header row that does not contain data
         for row in reader:
-            features.append(row[:-1]) # Do not add labels.
-            labels.append(row[-1]) # Add only labels.
-                                    # element -1 in row is the label
+            features.append(row[:-1]) # append features
+            labels.append(row[-1]) # Add labels to list
+                                    # element -1 in row is the label (last)
 
 
         for i in range(len(features)):          # Per row
@@ -20,7 +20,7 @@ def load(filename):
     return (features, labels) # tuple
 
 class KNN:
-    def __init__(self, k=3):
+    def __init__(self, k=3): # K amount of neighbors
         self.k = k 
 
     def euclidean_distance(self, A, B):
@@ -30,7 +30,7 @@ class KNN:
 
         return result ** 0.5
 
-    def fit(self, features_train, labels_train): # Give the model access to the necessary values by storing them as object variables
+    def fit(self, features_train, labels_train): # stores training data inside object
         self.features_train = features_train
         self.labels_train = labels_train
 
@@ -41,20 +41,18 @@ class KNN:
             predictions.append(prediction)      # Puts them in storage 
         return predictions
 
-    def predict(self, new_element):
-        distances:list[tuple[float,str]] = []  # (distance, label)          
-        for i in range(len(self.features_train)): # Runs once for every training data with the current one being i
-            element_feature = self.features_train[i] # gets the features for element i
-            element_label = self.labels_train[i]     # gets the label for element i
+    def predict(self, new_element): #new datapoint
+        distances = []      
+        for i in range(len(self.features_train)): # iterate over all training samples
+            element_feature = self.features_train[i] # gets the feature values
+            element_label = self.labels_train[i]     # gets the label
 
-            distance = self.euclidean_distance(new_element, element_feature) # Gets the distance between new_element and element_feature (element_feature is the features for element i)
-            distances.append((distance, element_label)) # Add a tuple with distance and element_label so you can sort the distance and keep track of the element_labels
-
-        distances.sort() # Sort it, magically sort its by distance.
+            distance = self.euclidean_distance(new_element, element_feature) # distance between test and training point
+            distances.append((distance, element_label)) # save distance together with label (connected)
 
         k_nearest_labels = []
         for j in range(self.k):
-            k_nearest_labels.append(distances[j][1]) # Adds the 3 lowest valeus of the sorted distances list.
+            k_nearest_labels.append(distances[j][1]) # takes (Kx) items from 
                                                      # [1] is the element_label part of the tuple on line 51
 
         labels = {}
