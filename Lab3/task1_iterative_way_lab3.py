@@ -22,7 +22,7 @@ def load(filename):
 
 
 class KNN:
-    def __init__(self, k=0): #constructor, k = amount of neighbours to check
+    def __init__(self, k): #constructor, k = amount of neighbours to check
         self.k = k
 
     def euclidean_distance(self, A, B): #euclidean distance
@@ -57,7 +57,7 @@ class KNN:
             k_nearest_labels.append(distances[i][1]) #take labels from k nearest points
 
         # count labels
-        label_count = {} #stores label (key) & value (appearances)
+        label_count = {} #stores label (key) & appearances (value)
         for label in k_nearest_labels: #loops through labels
             if label in label_count:
                 label_count[label] += 1 #if already in dictionary, +1 count
@@ -78,7 +78,7 @@ features_test, labels_test = load("iris_test.csv") #load test data
 
 start = perf_counter() #timer start
 
-knn = KNN(k=7) #determine K value
+knn = KNN(k=4) #determine K value
 knn.fit(features_train, labels_train) # store training data
 predictions = knn.predict_multiple(features_test) #predict labels for all test data
 

@@ -1,87 +1,87 @@
+import csv
 import numpy as np
 from time import perf_counter
-import csv
+
 
 def load(filename):
-    features = []
+    features = [] # empty lists containing features & labels
     labels = []
- 
+
     with open(filename, "r") as file:
         reader = csv.reader(file)
-        next(reader)  # skip header
+        next(reader)  # skip header (column names)
+
         for row in reader:
-            features.append(row[:-1])
-            labels.append(row[-1])
-        
-        for i in range(len(features)):
-            for j in range(len(features[i])):
-                features[i][j] = float(features[i][j])
-    return (np.array(features), np.array(labels))
+            features.append(row[:-1])  # feature values
+            labels.append(row[-1])     # class labels (last)
+
+    # converts feature values to float
+    for i in range(len(features)): # through each datapoint
+        for j in range(len(features[i])): # each feature in each datapoint
+            features[i][j] = float(features[i][j]) # convert features value from string to float
+
+    return np.array(features), np.array(labels)  # convert to numpy arrays
 
 class KMeans:
-    def __init__(self, k):
+    def __init__(self, k):  # constructor, k = amount of clusters
         self.k = k
 
-    def fit(self, cluster_features):
-        self.cluster_features = cluster_features
-        self.cluster_centers = cluster_features[:self.k]
+    def fit(self, data):
+        self.data = data # store data
+        self.centers = data[:self.k] # starting cluster points using K
 
     def assign_clusters(self):
-        cluster_distances = []
-        clusters = []
-        
-        #calculate the distance
-        for i in range(self.k):
-            clusters.append([])
+        clusters = [[] for _ in range(self.k)]  # create an empty list for each cluster
 
-            cluster_center = self.cluster_centers[i]
-            cluster_distances.append((np.sum((self.cluster_features - cluster_center) ** 2, axis=1)) ** 0.5) 
+        for i in range(len(self.data)): # loop through eery data point
+            # calculate distance from points to cluster center
+            distances = np.sqrt(np.sum((self.centers - self.data[i]) ** 2, axis=1))
+            closest_center = np.argmin(distances)  # np.argminn finds index of closest center
+            clusters[closest_center].append(i)     # assign index to list
 
-        for i in range(len(self.cluster_features)):
-            closest = 0
-
-            for j in range(self.k):
-                if cluster_distances[closest][i] > cluster_distances[j][i]:
-                    closest = j
-
-            clusters[closest].append(i)
         return clusters
 
-    def calculate_centers(self, clusters):
-        new_cluster_centers = []
-        for i in range(self.k):
-            features = np.zeros(shape=(len(clusters[i]), len(self.cluster_features[0])), dtype=float) 
-            # Y = cluster amount, X = feature amount
-            
-            for j in range(len(clusters[i])):
-                features[j] = self.cluster_features[clusters[i][j]]
+    def update_centers(self, clusters): # calculate new center
+        new_centers = [] # empty list
 
-            # Calculate
-            new_cluster_centers.append(np.mean(features,axis=0))
+        for i in range(self.k): # each cluster
+            if len(clusters[i]) == 0:  # cluster has no points
+                new_centers.append(self.centers[i])  # keep old center
+            else:
+                points = np.array([self.data[j] for j in clusters[i]])  # take all points
+                new_centers.append(np.mean(points, axis=0))  # calculate mean
 
-            pass
-        return np.array(new_cluster_centers)     
+        return np.array(new_centers) # updated center
 
-    def run(self, steps):
-        for i in range(steps):
-            clusters = self.assign_clusters()
-            new_centers = self.calculate_centers(clusters)
 
-            if ((np.array(new_centers) == np.array(self.cluster_centers)).all()):
-                print(f'Finished after {i} steps.\nCenters: \n{new_centers}')
+    def run(self, max_steps=100):
+        clusters = [[] for _ in range(self.k)]  # create an empty list for each cluster
+
+        for step in range(max_steps):
+            clusters = self.assign_clusters()         # assign points
+            new_centers = self.update_centers(clusters)  # update centers safely
+
+        # check if cluster centers did not change
+            if np.all(new_centers == self.centers): # if updated center = previous center
+                print(f"Converged after {step} steps") # clusters are done / settled
                 break
-            self.cluster_centers = new_centers
+
+            self.centers = new_centers  # update centers
+
+        return clusters, self.centers
 
 
+data_features, data_labels = load("iris.csv") # load dataset
 
-cluster_features, cluster_labels = load("iris.csv")
+start = perf_counter() # timer start
 
-start = perf_counter()
+kmeans = KMeans(4) # amount of clusters
+kmeans.fit(data_features) # fit data (assign)
+clusters, centers = kmeans.run(100) # run up to 100 times (max_steps)
 
-k = KMeans(2)
-k.fit(cluster_features)
-k.run(100)
+end = perf_counter() # timer end
 
-end = perf_counter()
-
-print(f"time: {end - start} seconds")
+print("Cluster centers:\n", centers) # print centers
+for i in range(kmeans.k):
+    print(f"Cluster {i} points indices:", clusters[i]) # prints cluster indexes
+print(f"time: {end - start} seconds") # time elapsed
