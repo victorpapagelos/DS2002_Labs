@@ -30,14 +30,14 @@ print("KNN Predictions (first 10 points):", knn_predictions[:10]) # print first 
 
 print(f"\nSCIKIT KNN time: {SKKNend - SKKNstart} seconds\n") # calculate time elapsed
 
-x_all = x
+x_all = x # use all features for k-means
 
-skkmeansstart = perf_counter()
+skkmeansstart = perf_counter() # timer
 
-kmeans_skl = SKKMeans(n_clusters=3, random_state=2)
-kmeans_skl.fit(x_all)
+kmeans_skl = SKKMeans(n_clusters=4, random_state=2) # create clusters
+kmeans_skl.fit(x_all) # assign points to clusters + finds centers
 
-skkmeansend = perf_counter()
+skkmeansend = perf_counter() # timer
 
 cluster_labels = kmeans_skl.labels_
 centroids = kmeans_skl.cluster_centers_
