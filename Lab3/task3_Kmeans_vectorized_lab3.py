@@ -28,15 +28,15 @@ class KMeans:
 
     def fit(self, data):
         self.data = np.array(data) # store data
-        self.centers = data[:self.k] # starting cluster center points using K
+        self.centers = data[:self.k] # starting center points using K (first K rows)
 
     def assign_clusters(self):
         clusters = [[] for _ in range(self.k)]  # create an empty list for each cluster
 
         for i in range(len(self.data)): # loop through every data point
-            # calculate distance from points to cluster center
+            # calculate distance from datapoints to cluster center
             distances = np.sqrt(np.sum((self.centers - self.data[i]) ** 2, axis=1))
-            closest_center = np.argmin(distances)  # np.argmin finds index of closest center to the datapoint
+            closest_center = np.argmin(distances)  # np.argmin finds index of center closets to the datapoint
             clusters[closest_center].append(i)     # assign index to list
 
         return clusters

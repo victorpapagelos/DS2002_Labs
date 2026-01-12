@@ -27,7 +27,7 @@ class KNN:
 
     def euclidean_distance(self, A, B): #euclidean distance
         total = 0.0 #distance value
-        for i in range(len(A)):
+        for i in range(len(A)): # loop through each feature in datapoint
             total += (A[i] - B[i]) ** 2 
         return total ** 0.5 #takes square root of total (the difference, squared)
 
